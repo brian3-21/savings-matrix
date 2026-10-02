@@ -1,21 +1,21 @@
 import type { Matrix } from "./generate.js";
 
 export interface FormatMatrixOptions {
-  /** Caracter para las lineas horizontales. Por defecto `─`. */
+  /** Horizontal rule character. Defaults to `─`. */
   hline?: string;
-  /** Caracter para los separadores de columna. Por defecto `│`. */
+  /** Column separator character. Defaults to `│`. */
   vline?: string;
-  /** Esquinas de la caja. Por defecto `┌ ┐ └ ┘`. */
+  /** Box corners. Defaults to `┌ ┐ └ ┘`. */
   corner?: Partial<Record<"tl" | "tr" | "bl" | "br", string>>;
 }
 
 /**
- * Formatea una matriz como tabla alineada en texto plano.
+ * Renders a matrix as an aligned plain-text table.
  *
  * ```
  * ┌───────────────┐
- * │   50 │  300   │
- * │   10 │   20   │
+ * │   50 │  300 │
+ * │   10 │   20 │
  * └───────────────┘
  * ```
  */
@@ -54,7 +54,7 @@ export function formatMatrix(
   return lines.join("\n");
 }
 
-/** Versiones ASCII para logs y terminales sin soporte de unicode. */
+/** ASCII variant for logs and terminals without unicode support. */
 export function formatMatrixAscii(matrix: Matrix): string {
   return formatMatrix(matrix, {
     hline: "-",

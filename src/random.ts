@@ -11,7 +11,7 @@ export type RandomSource = () => number;
  */
 export function createSeededRandom(seed: number): RandomSource {
   if (!Number.isFinite(seed)) {
-    throw new RangeError("seed debe ser un numero finito");
+    throw new RangeError("seed must be a finite number");
   }
 
   let state = seed >>> 0;
@@ -39,7 +39,7 @@ export function sampleDistinctAscending(
 ): number[] {
   if (count > total) {
     throw new RangeError(
-      `no se pueden elegir ${count} elementos distintos de ${total}`,
+      `cannot pick ${count} distinct values out of ${total}`,
     );
   }
 

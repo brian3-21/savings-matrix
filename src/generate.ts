@@ -5,40 +5,40 @@ import {
   type RandomSource,
 } from "./random.js";
 
-/** Matriz cuadrada de numeros: `matrix[fila][columna]`. */
+/** Square matrix: `matrix[row][column]`. */
 export type Matrix = number[][];
 
 export interface GenerateMatrixOptions {
-  /** Base de los multiplos. Por defecto `10`. */
+  /** Base for every value. Defaults to `10`. */
   multiple?: number;
-  /** Fuente de aleatoriedad. Por defecto `Math.random`. */
+  /** Randomness source. Defaults to `Math.random`. */
   rng?: RandomSource;
 }
 
 function assertPositiveInteger(value: number, name: string): void {
   if (!Number.isInteger(value) || value < 1) {
     throw new SavingsMatrixError(
-      `${name} debe ser un entero >= 1. Recibido: ${value}`,
+      `${name} must be an integer >= 1. Received: ${value}`,
     );
   }
 }
 
 /**
- * Suma total minima posible para una matriz `n x n` con valores
- * mayores o iguales a `multiple`.
+ * Lowest total possible for an `n x n` matrix whose values are all
+ * greater than or equal to `multiple`.
  */
 export function minTotalFor(n: number, multiple = 10): number {
   return multiple * n * n;
 }
 
 /**
- * Genera una matriz cuadrada `n x n` con valores multiplos de `multiple`,
- * todos >= `multiple`, cuya suma total sea exactamente `total`.
+ * Generates a square `n x n` matrix whose values are all multiples of
+ * `multiple`, all >= `multiple`, and sum to exactly `total`.
  *
- * Usa stars and bars: reparte `K = total / multiple - n^2` unidades libres
- * entre las `n^2` celdas de forma uniforme.
+ * Uses stars and bars to spread `K = total / multiple - n^2` free units
+ * uniformly across the `n^2` cells.
  *
- * @throws {SavingsMatrixError} si los parametros no son validos.
+ * @throws {SavingsMatrixError} if the arguments are not valid.
  */
 export function generateMatrix(
   total: number,
@@ -52,33 +52,31 @@ export function generateMatrix(
 
   if (!Number.isFinite(total) || !Number.isInteger(total)) {
     throw new SavingsMatrixError(
-      `total debe ser un numero entero. Recibido: ${total}`,
+      `total must be an integer. Received: ${total}`,
     );
   }
 
   if (total % multiple !== 0) {
     throw new SavingsMatrixError(
-      `total debe ser multiplo de ${multiple}. Recibido: ${total}`,
+      `total must be a multiple of ${multiple}. Received: ${total}`,
     );
   }
 
   const minTotal = minTotalFor(n, multiple);
   if (total < minTotal) {
     throw new SavingsMatrixError(
-      `total debe ser al menos ${minTotal} para una matriz ${n}x${n} con valores >= ${multiple}. Recibido: ${total}`,
+      `total must be at least ${minTotal} for an ${n}x${n} matrix with values >= ${multiple}. Received: ${total}`,
     );
   }
 
   const cells = n * n;
-  const targetUnits = total / multiple; // suma objetivo en unidades de `multiple`
-  const freeUnits = targetUnits - cells; // >= 0
+  const targetUnits = total / multiple;
+  const freeUnits = targetUnits - cells;
   const bars = cells - 1;
-
-  // Posiciones de las barras entre las unidades libres y las celdas menos una.
   const positions = freeUnits + bars;
   const barPositions = sampleDistinctAscending(rng, positions, bars);
 
-  // Cada celda es la distancia entre barras consecutivas.
+  // Each cell holds the gap between two consecutive bars.
   const units: number[] = [];
   let previous = -1;
   for (const bar of barPositions) {
@@ -100,14 +98,14 @@ export function generateMatrix(
   const sum = sumMatrix(matrix);
   if (sum !== total) {
     throw new SavingsMatrixError(
-      `Error interno: suma = ${sum}, esperado = ${total}`,
+      `internal error: sum = ${sum}, expected = ${total}`,
     );
   }
 
   return matrix;
 }
 
-/** Suma todos los valores de la matriz. */
+/** Sums every value in the matrix. */
 export function sumMatrix(matrix: Matrix): number {
   let sum = 0;
   for (const row of matrix) {
@@ -124,7 +122,7 @@ export interface MatrixTotals {
   max: number;
 }
 
-/** Resumen util para mostrar en una UI: totales por fila, columna y extrema. */
+/** Row, column and extreme totals, handy for rendering in a UI. */
 export function matrixTotals(matrix: Matrix): MatrixTotals {
   const n = matrix.length;
   const rows = new Array<number>(n).fill(0);
@@ -145,20 +143,17 @@ export function matrixTotals(matrix: Matrix): MatrixTotals {
   return { rows, columns, total: sumMatrix(matrix), min, max };
 }
 
-/**
- * Convierte la matriz en un array plano, util para `JSON.stringify` o para
- * enviarla a un worker sin metadatos de filas.
- */
+/** Flattens the matrix into a single array of values. */
 export function flattenMatrix(matrix: Matrix): number[] {
   return matrix.flat();
 }
 
-/** Reconstruye una matriz plana de ancho `n` a partir de `generateMatrix`. */
+/** Rebuilds an `n` wide matrix from the output of {@link flattenMatrix}. */
 export function reshape(flat: readonly number[], n: number): Matrix {
   assertPositiveInteger(n, "n");
   if (flat.length !== n * n) {
     throw new SavingsMatrixError(
-      `flat.length (${flat.length}) no coincide con ${n}x${n}`,
+      `flat.length (${flat.length}) does not match ${n}x${n}`,
     );
   }
   const matrix: Matrix = [];
