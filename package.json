@@ -1,8 +1,25 @@
 {
   "name": "savings-matrix",
   "version": "0.1.0",
-  "description": "Genera matrices cuadradas n x n de multiplos con suma total exacta.",
+  "description": "Generate square n x n matrices of multiples whose sum is exactly the total you ask for.",
   "license": "MIT",
+  "author": "brian3-21",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brian3-21/savings-matrix.git"
+  },
+  "homepage": "https://github.com/brian3-21/savings-matrix#readme",
+  "bugs": {
+    "url": "https://github.com/brian3-21/savings-matrix/issues"
+  },
+  "keywords": [
+    "matrix",
+    "savings",
+    "multiples",
+    "stars-and-bars",
+    "generator",
+    "typescript"
+  ],
   "type": "module",
   "sideEffects": false,
   "files": [

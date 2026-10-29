@@ -39,3 +39,7 @@ Heads up: uniform over compositions means a few cells can take most of the total
 npm install
 npm run typecheck && npm test && npm run build
 ```
+
+## License
+
+MIT
